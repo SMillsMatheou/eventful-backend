@@ -1,9 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   @Column({ unique: true })
   emailAddress: string;
@@ -11,8 +17,8 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
-  phoneNumber: string;
+  @Column({ nullable: true })
+  phoneNumber?: string;
 
   @Column()
   firstName: string;
@@ -20,12 +26,12 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column()
-  lastLogin: Date;
+  @Column({ nullable: true })
+  lastLogin?: Date;
 
-  @Column()
-  createdDate: Date;
+  @CreateDateColumn()
+  createdDate?: Date;
 
-  @Column()
-  updatedDate: Date;
+  @UpdateDateColumn()
+  updatedDate?: Date;
 }
