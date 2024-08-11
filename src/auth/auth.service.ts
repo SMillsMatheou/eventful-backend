@@ -16,7 +16,7 @@ export class AuthService {
   1;
 
   async validateUser(emailAddress: string, password: string): Promise<User> {
-    const user: User = await this.usersService.findOne(emailAddress);
+    const user: User = await this.usersService.findOneByEmail(emailAddress);
 
     if (!user) {
       throw new BadRequestException('Invalid credentials');
@@ -41,7 +41,9 @@ export class AuthService {
   }
 
   async register(user: RegisterRequestDto): Promise<AccessToken> {
-    const existingUser = await this.usersService.findOne(user.emailAddress);
+    const existingUser = await this.usersService.findOneByEmail(
+      user.emailAddress,
+    );
 
     if (existingUser) {
       throw new BadRequestException('User already exists');
