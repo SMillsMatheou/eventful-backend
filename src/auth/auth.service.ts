@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -35,8 +39,13 @@ export class AuthService {
       request.password,
     );
     const payload = { emailAddress: user.emailAddress, id: user.id };
+
+    const refreshTokenPayload = { ...payload };
     return {
       access_token: this.jwtService.sign(payload),
+      refresh_token: this.jwtService.sign(refreshTokenPayload, {
+        expiresIn: '7d',
+      }),
     };
   }
 
@@ -56,5 +65,20 @@ export class AuthService {
     await this.usersService.create(newUser);
 
     return this.login(newUser);
+  }
+
+  async refresh(refreshToken: string): Promise<AccessToken> {
+    try {
+      const payload = this.jwtService.verify(refreshToken);
+
+      return {
+        access_token: this.jwtService.sign({
+          emailAddress: payload.emailAddress,
+          id: payload.id,
+        }),
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
   }
 }
