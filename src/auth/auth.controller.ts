@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Post,
   Req,
   Res,
@@ -12,11 +13,11 @@ import { Public } from './decorators/public.decorator';
 import { LoginRequestDto } from './dtos/LoginRequest.dto';
 import { Request, Response } from 'express';
 
-@Public()
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @Post('login')
   async login(
     @Body() loginBody: LoginRequestDto,
@@ -40,6 +41,7 @@ export class AuthController {
     };
   }
 
+  @Public()
   @Post('register')
   async register(
     @Body() registerBody: RegisterRequestDto,
@@ -63,6 +65,7 @@ export class AuthController {
     };
   }
 
+  @Public()
   @Post('logout')
   async logout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('access_token');
@@ -74,6 +77,7 @@ export class AuthController {
     };
   }
 
+  @Public()
   @Post('refresh')
   async refresh(
     @Req() request: Request,
@@ -95,6 +99,14 @@ export class AuthController {
     return {
       statusCode: 200,
       message: 'Token refreshed',
+    };
+  }
+
+  @Get('verify')
+  async verify() {
+    return {
+      statusCode: 200,
+      message: 'Authenticated',
     };
   }
 }
