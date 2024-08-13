@@ -23,7 +23,7 @@ export class AuthService {
     const user: User = await this.usersService.findOneByEmail(emailAddress);
 
     if (!user) {
-      throw new BadRequestException('Invalid credentials');
+      throw new BadRequestException('No user found');
     }
 
     if (!bcrypt.compareSync(password, user.password)) {
@@ -64,7 +64,10 @@ export class AuthService {
 
     await this.usersService.create(newUser);
 
-    return this.login(newUser);
+    return this.login({
+      emailAddress: user.emailAddress,
+      password: user.password,
+    });
   }
 
   async refresh(refreshToken: string): Promise<AccessToken> {
