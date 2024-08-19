@@ -35,9 +35,14 @@ export class AuthController {
       secure: process.env.NODE_ENV === 'production',
     });
 
+    const payload = await this.authService.verify(result.access_token);
+
     return {
-      statusCode: 200,
-      message: 'Logged in',
+      id: payload.id,
+      emailAddress: payload.emailAddress,
+      phoneNumber: payload.phoneNumber,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
     };
   }
 
@@ -59,9 +64,14 @@ export class AuthController {
       secure: process.env.NODE_ENV === 'production',
     });
 
+    const payload = await this.authService.verify(result.access_token);
+
     return {
-      statusCode: 200,
-      message: 'User registered',
+      id: payload.id,
+      emailAddress: payload.emailAddress,
+      phoneNumber: payload.phoneNumber,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
     };
   }
 
@@ -103,10 +113,21 @@ export class AuthController {
   }
 
   @Get('verify')
-  async verify() {
+  async verify(@Req() request: Request) {
+    const accesToken = request.cookies['access_token'];
+
+    if (!accesToken) {
+      throw new BadRequestException('No access token provided');
+    }
+
+    const payload = await this.authService.verify(accesToken);
+
     return {
-      statusCode: 200,
-      message: 'Authenticated',
+      id: payload.id,
+      emailAddress: payload.emailAddress,
+      phoneNumber: payload.phoneNumber,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
     };
   }
 }

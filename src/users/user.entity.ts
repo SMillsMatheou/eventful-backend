@@ -4,7 +4,11 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToMany,
+  OneToMany,
 } from 'typeorm';
+import { Event } from '../events/event.entity';
+import { UserEvent } from '../events/user-event.entity';
 
 @Entity()
 export class User {
@@ -34,4 +38,13 @@ export class User {
 
   @UpdateDateColumn()
   updatedDate?: Date;
+
+  @ManyToMany(() => Event, (event) => event.users)
+  events?: Event[];
+
+  @OneToMany(() => UserEvent, (userEvent) => userEvent.user)
+  userEvents?: UserEvent[];
+
+  @OneToMany(() => Event, (event) => event.createdBy)
+  ownedEvents?: Event[];
 }

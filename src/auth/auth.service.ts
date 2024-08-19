@@ -38,7 +38,13 @@ export class AuthService {
       request.emailAddress,
       request.password,
     );
-    const payload = { emailAddress: user.emailAddress, id: user.id };
+    const payload = {
+      id: user.id,
+      emailAddress: user.emailAddress,
+      phoneNumber: user.phoneNumber,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
 
     const refreshTokenPayload = { ...payload };
     return {
@@ -76,12 +82,31 @@ export class AuthService {
 
       return {
         access_token: this.jwtService.sign({
-          emailAddress: payload.emailAddress,
           id: payload.id,
+          emailAddress: payload.emailAddress,
+          phoneNumber: payload.phoneNumber,
+          firstName: payload.firstName,
+          lastName: payload.lastName,
         }),
       };
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  async verify(accessToken: string) {
+    try {
+      const payload = this.jwtService.verify(accessToken);
+
+      return {
+        id: payload.id,
+        emailAddress: payload.emailAddress,
+        phoneNumber: payload.phoneNumber,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid access token');
     }
   }
 }
